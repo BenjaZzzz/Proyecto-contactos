@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Contactos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Lista de Contactos</h1>
+
+    <div class="contact-form">
+        <h2 th:text="${contacto.idContacto} != null ? 'Editar Contacto' : 'Añadir Nuevo Contacto'"></h2>
+        <form th:action="@{/guardar}" method="post" th:object="${contacto}">
+            <input type="hidden" th:field="*{idContacto}">
+            <div class="form-group">
+                <label for="name"><i class="fas fa-user"></i> Nombre</label>
+                <input type="text" id="name" th:field="*{nombre}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone"><i class="fas fa-phone"></i> Teléfono</label>
+                <input type="tel" id="phone" th:field="*{celular}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="email" th:field="*{email}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company"><i class="fas fa-building"></i> Compañía (opcional)</label>
+                <input type="text" id="company" th:field="*{compania}">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i>
+                <span th:text="${contacto.idContacto} != null ? 'Actualizar Contacto' : 'Añadir Contacto'"></span>
+            </button>
+            
+        </form>
+    </div>
+
+    <div class="contact-list">
+        <div th:if="${#lists.isEmpty(contactos)}" class="empty-state">
+            <i class="fas fa-address-book"></i>
+            <h3>No hay contactos aún</h3>
+            <p>Agrega tu primer contacto usando el formulario de arriba</p>
+        </div>
+
+        <div th:each="contacto : ${contactos}" class="contact-card">
+            <div class="contact-info">
+                <div class="contact-details">
+                    <h3 th:text="${contacto.nombre}"></h3>
+                    <p class="contact-id"><i class="fas fa-hashtag"></i> <span th:text="${contacto.idContacto}"></span></p>
+                    <p><i class="fas fa-phone"></i> <span th:text="${contacto.celular}"></span></p>
+                    <p><i class="fas fa-envelope"></i> <span th:text="${contacto.email}"></span></p>
+                    <p th:if="${contacto.compania}"><i class="fas fa-building"></i> <span th:text="${contacto.compania}"></span></p>
+                </div>
+                <div class="contact-actions">
+                    <a th:href="@{/editar/{id}(id=${contacto.idContacto})}" class="btn btn-edit btn-small" title="Editar contacto">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form th:action="@{/eliminar/{id}(id=${contacto.idContacto})}" method="post" style="display:inline">
+                        <button type="submit" class="btn btn-delete btn-small" title="Eliminar contacto">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación desde el backend -->
+    <div id="flash-message" th:if="${mensaje}" th:data-message="${mensaje}" th:data-type="${tipoMensaje}" style="display: none;"></div>
+</div>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
